@@ -1,0 +1,222 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Theme tokens ─────────────────────────────────────────────────────────── */
+/*
+  To add a new theme:
+  1. Add a `.theme-<name>` block below with all --j-* variables.
+  2. Add a Theme entry in src/theme/themes.ts.
+  That's it — the ThemeSwitcher picks it up automatically.
+*/
+
+@layer base {
+  /* Light (default) */
+  :root,
+  .theme-light {
+    --j-bg-base:       #f9fafb;   /* page background */
+    --j-bg-surface:    #ffffff;   /* card / panel background */
+    --j-bg-elevated:   #f3f4f6;   /* hover, selected row */
+    --j-sidebar-bg:    #ffffff;
+    --j-sidebar-border:#e5e7eb;
+    --j-text-primary:  #111827;
+    --j-text-secondary:#374151;
+    --j-text-muted:    #6b7280;
+    --j-border:        #e5e7eb;
+    --j-accent:        #4f46e5;   /* indigo-600 */
+    --j-accent-hover:  #4338ca;
+    --j-accent-text:   #ffffff;
+    --j-ring:          #6366f1;
+  }
+
+  /* Dark */
+  .theme-dark {
+    --j-bg-base:       #030712;
+    --j-bg-surface:    #111827;
+    --j-bg-elevated:   #1f2937;
+    --j-sidebar-bg:    #111827;
+    --j-sidebar-border:#1f2937;
+    --j-text-primary:  #f9fafb;
+    --j-text-secondary:#e5e7eb;
+    --j-text-muted:    #9ca3af;
+    --j-border:        #1f2937;
+    --j-accent:        #818cf8;   /* indigo-400 */
+    --j-accent-hover:  #a5b4fc;
+    --j-accent-text:   #1e1b4b;
+    --j-ring:          #818cf8;
+  }
+
+  /* Kuromi — kawaii goth: deep purple-black + pink-purple */
+  .theme-kuromi {
+    --j-bg-base:       #0d0015;
+    --j-bg-surface:    #1a0a2e;
+    --j-bg-elevated:   #2d1054;
+    --j-sidebar-bg:    #130820;
+    --j-sidebar-border:#3b1a6e;
+    --j-text-primary:  #f5d0fe;
+    --j-text-secondary:#e9d5ff;
+    --j-text-muted:    #c084fc;
+    --j-border:        #3b1a6e;
+    --j-accent:        #c026d3;   /* fuchsia-600 */
+    --j-accent-hover:  #a21caf;
+    --j-accent-text:   #fdf4ff;
+    --j-ring:          #e879f9;
+  }
+
+  /* Cinnamoroll — soft baby blue + lavender */
+  .theme-cinnamoroll {
+    --j-bg-base:       #eff8ff;
+    --j-bg-surface:    #ffffff;
+    --j-bg-elevated:   #dbeafe;
+    --j-sidebar-bg:    #e0f2fe;
+    --j-sidebar-border:#bae6fd;
+    --j-text-primary:  #1e3a5f;
+    --j-text-secondary:#1e40af;
+    --j-text-muted:    #60a5fa;
+    --j-border:        #bae6fd;
+    --j-accent:        #3b82f6;   /* blue-500 */
+    --j-accent-hover:  #2563eb;
+    --j-accent-text:   #ffffff;
+    --j-ring:          #93c5fd;
+  }
+
+  /* Bad Badtz-Maru — bold black/white + electric yellow */
+  .theme-badtzbadtzmaru {
+    --j-bg-base:       #0a0a0a;
+    --j-bg-surface:    #171717;
+    --j-bg-elevated:   #262626;
+    --j-sidebar-bg:    #111111;
+    --j-sidebar-border:#333333;
+    --j-text-primary:  #fafafa;
+    --j-text-secondary:#e5e5e5;
+    --j-text-muted:    #a3a3a3;
+    --j-border:        #333333;
+    --j-accent:        #facc15;   /* yellow-400 */
+    --j-accent-hover:  #eab308;
+    --j-accent-text:   #0a0a0a;
+    --j-ring:          #fde047;
+  }
+
+  /* My Melody — soft pink-white + hot pink */
+  .theme-mymelody {
+    --j-bg-base:       #fff0f5;
+    --j-bg-surface:    #ffffff;
+    --j-bg-elevated:   #ffe4ed;
+    --j-sidebar-bg:    #fce7f3;
+    --j-sidebar-border:#fbcfe8;
+    --j-text-primary:  #4a0020;
+    --j-text-secondary:#881337;
+    --j-text-muted:    #be185d;
+    --j-border:        #fbcfe8;
+    --j-accent:        #f43f8e;   /* hot pink */
+    --j-accent-hover:  #db2777;
+    --j-accent-text:   #ffffff;
+    --j-ring:          #f9a8d4;
+  }
+
+  /* Pompompurin — warm cream + amber */
+  .theme-pompompurin {
+    --j-bg-base:       #fffbeb;
+    --j-bg-surface:    #ffffff;
+    --j-bg-elevated:   #fef3c7;
+    --j-sidebar-bg:    #fef9e7;
+    --j-sidebar-border:#fde68a;
+    --j-text-primary:  #451a03;
+    --j-text-secondary:#92400e;
+    --j-text-muted:    #b45309;
+    --j-border:        #fde68a;
+    --j-accent:        #d97706;   /* amber-600 */
+    --j-accent-hover:  #b45309;
+    --j-accent-text:   #ffffff;
+    --j-ring:          #fcd34d;
+  }
+
+  /* Noir — OLED black + Sergei's Glint (cat-eye yellow-green) */
+  .theme-noir {
+    --j-bg-base:       #000000;   /* pure OLED black */
+    --j-bg-surface:    #0a0a0a;
+    --j-bg-elevated:   #141414;
+    --j-sidebar-bg:    #050505;
+    --j-sidebar-border:#1a1a1a;
+    --j-text-primary:  #f0f0f0;
+    --j-text-secondary:#c0c0c0;
+    --j-text-muted:    #666666;
+    --j-border:        #1a1a1a;
+    --j-accent:        #c8f135;   /* Sergei's Glint — yellow-green */
+    --j-accent-hover:  #b8ff00;
+    --j-accent-text:   #000000;
+    --j-ring:          #c8f135;
+    letter-spacing: 0.01em;
+  }
+
+  * {
+    border-color: var(--j-border);
+  }
+
+  body {
+    @apply antialiased;
+    background-color: var(--j-bg-base);
+    color: var(--j-text-primary);
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+}
+
+/* ─── Component layer ───────────────────────────────────────────────────────── */
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center px-4 py-2 rounded-lg font-medium text-sm
+           disabled:opacity-50 disabled:cursor-not-allowed
+           transition-colors duration-150;
+    background-color: var(--j-accent);
+    color: var(--j-accent-text);
+  }
+  .btn-primary:hover:not(:disabled) {
+    background-color: var(--j-accent-hover);
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center px-4 py-2 rounded-lg font-medium text-sm
+           border
+           disabled:opacity-50 disabled:cursor-not-allowed
+           transition-colors duration-150;
+    background-color: var(--j-bg-surface);
+    color: var(--j-text-secondary);
+    border-color: var(--j-border);
+  }
+  .btn-secondary:hover:not(:disabled) {
+    background-color: var(--j-bg-elevated);
+  }
+
+  .btn-danger {
+    @apply inline-flex items-center justify-center px-4 py-2 rounded-lg font-medium text-sm
+           bg-red-600 text-white hover:bg-red-700 active:bg-red-800
+           disabled:opacity-50 disabled:cursor-not-allowed
+           transition-colors duration-150;
+  }
+
+  .input {
+    @apply block w-full rounded-lg border px-3 py-2 text-sm
+           focus:outline-none focus:ring-2 focus:border-transparent
+           disabled:opacity-50;
+    background-color: var(--j-bg-surface);
+    color: var(--j-text-primary);
+    border-color: var(--j-border);
+  }
+  .input::placeholder {
+    color: var(--j-text-muted);
+  }
+  .input:focus {
+    --tw-ring-color: var(--j-ring);
+  }
+
+  .label {
+    @apply block text-sm font-medium mb-1;
+    color: var(--j-text-secondary);
+  }
+
+  .card {
+    @apply rounded-xl border shadow-sm hover:shadow-md transition-shadow duration-150;
+    background-color: var(--j-bg-surface);
+    border-color: var(--j-border);
+  }
+}
