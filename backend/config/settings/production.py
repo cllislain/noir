@@ -1,11 +1,17 @@
 from .base import *  # noqa: F401, F403
 
+import os
 import dj_database_url
 from decouple import config, Csv
 
 DEBUG = False
 
-ALLOWED_HOSTS = config("DJANGO_ALLOWED_HOSTS", cast=Csv())
+ALLOWED_HOSTS = [
+    h.strip()
+    for h in os.environ.get("DJANGO_ALLOWED_HOSTS", "").split(",")
+    if h.strip()
+]
+ALLOWED_HOSTS += [".onrender.com"]
 
 # ── Database — Supabase PostgreSQL via DATABASE_URL ──────────────────────────
 DATABASES = {
