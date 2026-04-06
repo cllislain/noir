@@ -1,16 +1,17 @@
 import { useState, type FormEvent } from "react"
 import { Link, useNavigate, useLocation, useSearchParams } from "react-router-dom"
+import { GoogleLogin } from "@react-oauth/google"
 import { useAuth } from "@/auth/useAuth"
 
 export function LoginPage() {
-  const { login } = useAuth()
+  const { login, googleLogin } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
   const [searchParams] = useSearchParams()
   const isLocked = searchParams.get("locked") === "1"
   const from = (location.state as { from?: Location })?.from?.pathname ?? "/"
 
-  const [email, setEmail] = useState("")
+  const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -20,10 +21,10 @@ export function LoginPage() {
     setError(null)
     setIsSubmitting(true)
     try {
-      await login(email, password)
+      await login(username, password)
       navigate(from, { replace: true })
     } catch {
-      setError("Invalid email or password. Please try again.")
+      setError("Invalid username or password. Please try again.")
     } finally {
       setIsSubmitting(false)
     }
@@ -66,15 +67,15 @@ export function LoginPage() {
             )}
 
             <div>
-              <label htmlFor="email" className="label">Email</label>
+              <label htmlFor="username" className="label">Username</label>
               <input
-                id="email"
-                type="email"
+                id="username"
+                type="text"
                 required
-                autoComplete="email"
+                autoComplete="username"
                 className="input"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
               />
             </div>
 
@@ -95,6 +96,36 @@ export function LoginPage() {
               {isSubmitting ? "Signing in…" : "Sign in"}
             </button>
           </form>
+        </div>
+
+        <div className="relative my-4">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t" style={{ borderColor: "var(--j-border)" }} />
+          </div>
+          <div className="relative flex justify-center text-xs" style={{ color: "var(--j-text-muted)" }}>
+            <span className="px-2" style={{ backgroundColor: "var(--j-bg-base)" }}>or</span>
+          </div>
+        </div>
+
+        <div className="flex justify-center">
+          <GoogleLogin
+            onSuccess={async (credentialResponse) => {
+              if (credentialResponse.credential) {
+                try {
+                  await googleLogin(credentialResponse.credential)
+                  navigate(from, { replace: true })
+                } catch {
+                  setError("Google sign-in failed. Please try again.")
+                }
+              }
+            }}
+            onError={() => setError("Google sign-in failed.")}
+            theme="outline"
+            shape="rectangular"
+            size="large"
+            text="continue_with"
+            width="360"
+          />
         </div>
 
         <p className="text-center text-sm mt-4" style={{ color: "var(--j-text-muted)" }}>

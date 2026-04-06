@@ -15,7 +15,7 @@ export function Layout({ children, sidebar, navSlot }: LayoutProps) {
   const { isCollapsed, toggle } = useSidebarCollapse()
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ backgroundColor: "var(--j-bg-base)", color: "var(--j-text-primary)" }}>
+    <div className="h-screen flex flex-col overflow-hidden" style={{ backgroundColor: "var(--j-bg-base)", color: "var(--j-text-primary)" }}>
       <Navbar
         onMenuClick={() => setSidebarOpen((v) => !v)}
         sidebarOpen={sidebarOpen}
@@ -44,8 +44,8 @@ export function Layout({ children, sidebar, navSlot }: LayoutProps) {
                 sidebarOpen ? "translate-x-0" : "-translate-x-full",
                 // Desktop: static, collapsible
                 isCollapsed
-                  ? "md:static md:translate-x-0 md:z-auto md:top-auto md:bottom-auto md:w-0 md:overflow-hidden md:border-r-0"
-                  : "md:static md:translate-x-0 md:z-auto md:top-auto md:bottom-auto md:w-64 md:overflow-y-auto md:h-auto",
+                  ? "md:static md:translate-x-0 md:z-auto md:w-0 md:h-full md:overflow-hidden md:border-r-0"
+                  : "md:static md:translate-x-0 md:z-auto md:w-64 md:h-full md:overflow-y-auto",
               ].join(" ")}
               style={{
                 backgroundColor: "var(--j-sidebar-bg)",

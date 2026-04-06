@@ -1,6 +1,41 @@
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.exceptions import AuthenticationFailed
 from .models import User
+
+
+class UsernameTokenObtainPairSerializer(TokenObtainPairSerializer):
+    """Accept username + password instead of email + password."""
+
+    username_field = "username"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Replace the email field with a plain username field
+        self.fields.pop(User.USERNAME_FIELD, None)
+        self.fields["username"] = serializers.CharField()
+
+    def validate(self, attrs):
+        username = attrs.get("username", "").strip()
+        password = attrs.get("password", "")
+
+        try:
+            user = User.objects.get(username__iexact=username)
+        except User.DoesNotExist:
+            raise AuthenticationFailed("No active account found with the given credentials.")
+
+        if not user.check_password(password):
+            raise AuthenticationFailed("No active account found with the given credentials.")
+
+        if not user.is_active:
+            raise AuthenticationFailed("No active account found with the given credentials.")
+
+        refresh = self.get_token(user)
+        return {
+            "access": str(refresh.access_token),
+            "refresh": str(refresh),
+        }
 
 
 class RegisterSerializer(serializers.ModelSerializer):

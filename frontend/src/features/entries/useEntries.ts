@@ -5,6 +5,7 @@ import type { Entry } from "@/types";
 const ENTRIES_KEY = ["entries"] as const;
 const TRASH_KEY = ["entries", "trash"] as const;
 const STREAK_KEY = ["entries", "streak"] as const;
+const HEATMAP_KEY = ["insights", "heatmap"] as const;
 
 /** Extract the next page number from a DRF paginated `next` URL, e.g. "…?page=3" → 3 */
 function extractPage(url: string | null): number | undefined {
@@ -48,6 +49,7 @@ export function useCreateEntry() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ENTRIES_KEY });
       qc.invalidateQueries({ queryKey: STREAK_KEY });
+      qc.invalidateQueries({ queryKey: HEATMAP_KEY });
     },
   });
 }
@@ -72,6 +74,7 @@ export function useDeleteEntry() {
       qc.invalidateQueries({ queryKey: ENTRIES_KEY });
       qc.invalidateQueries({ queryKey: TRASH_KEY });
       qc.invalidateQueries({ queryKey: STREAK_KEY });
+      qc.invalidateQueries({ queryKey: HEATMAP_KEY });
     },
   });
 }
@@ -143,6 +146,7 @@ export function useRestoreEntry() {
       qc.invalidateQueries({ queryKey: ENTRIES_KEY });
       qc.invalidateQueries({ queryKey: TRASH_KEY });
       qc.invalidateQueries({ queryKey: STREAK_KEY });
+      qc.invalidateQueries({ queryKey: HEATMAP_KEY });
     },
   });
 }
@@ -154,6 +158,7 @@ export function useHardDeleteEntry() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: TRASH_KEY });
       qc.invalidateQueries({ queryKey: STREAK_KEY });
+      qc.invalidateQueries({ queryKey: HEATMAP_KEY });
     },
   });
 }

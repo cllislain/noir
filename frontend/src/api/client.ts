@@ -1,6 +1,10 @@
 import axios from "axios";
 
-const BASE_URL = "/api/v1";
+// In production (Render), VITE_API_URL is the backend root e.g. https://noir-api.onrender.com
+// In development, it is unset and Vite's proxy handles /api → localhost:8000
+const BASE_URL = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL}/api/v1`
+  : "/api/v1";
 
 export const apiClient = axios.create({
   baseURL: BASE_URL,

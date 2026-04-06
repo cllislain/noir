@@ -36,8 +36,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => window.removeEventListener("auth:logout", handler);
   }, [queryClient]);
 
-  const login = useCallback(async (email: string, password: string) => {
-    const res = await authApi.login({ email, password });
+  const login = useCallback(async (username: string, password: string) => {
+    const res = await authApi.login({ username, password });
     localStorage.setItem("access_token", res.data.access);
     localStorage.setItem("refresh_token", res.data.refresh);
     const me = await authApi.me();
@@ -51,6 +51,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     passwordConfirm: string
   ) => {
     const res = await authApi.register({ email, username, password, password_confirm: passwordConfirm });
+    localStorage.setItem("access_token", res.data.access);
+    localStorage.setItem("refresh_token", res.data.refresh);
+    setUser(res.data.user);
+  }, []);
+
+  const googleLogin = useCallback(async (credential: string) => {
+    const res = await authApi.googleLogin(credential);
     localStorage.setItem("access_token", res.data.access);
     localStorage.setItem("refresh_token", res.data.refresh);
     setUser(res.data.user);
@@ -86,6 +93,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isLoading,
         login,
         register,
+        googleLogin,
         logout,
         updateUser,
       }}

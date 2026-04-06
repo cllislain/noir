@@ -14,6 +14,7 @@ class User(AbstractUser):
     email = models.EmailField(unique=True)
     display_name = models.CharField(max_length=100, blank=True, default="")
     avatar = models.ImageField(upload_to=avatar_upload_path, null=True, blank=True)
+    google_id = models.CharField(max_length=128, blank=True, default="", db_index=True)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["username"]

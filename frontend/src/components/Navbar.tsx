@@ -170,6 +170,18 @@ export function Navbar({ onMenuClick, sidebarOpen, navSlot }: NavbarProps) {
                       <span>Account settings</span>
                     </Link>
 
+                    <Link
+                      to="/changelog"
+                      onClick={() => setAccountOpen(false)}
+                      className="flex items-center gap-3 px-4 py-2.5 text-sm transition-colors w-full"
+                      style={{ color: "var(--j-text-secondary)" }}
+                      onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = "var(--j-bg-elevated)" }}
+                      onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = "transparent" }}
+                    >
+                      <span>📋</span>
+                      <span>Changelog</span>
+                    </Link>
+
                     {user.is_staff && (
                       <Link
                         to="/admin"
@@ -198,6 +210,13 @@ export function Navbar({ onMenuClick, sidebarOpen, navSlot }: NavbarProps) {
                       <span>↩</span>
                       <span>{signingOut ? "Signing out…" : "Sign out"}</span>
                     </button>
+                  </div>
+
+                  <div
+                    className="px-4 py-2 text-center text-xs"
+                    style={{ color: "var(--j-text-muted)", borderTop: "1px solid var(--j-border)" }}
+                  >
+                    Noir v1.0.0
                   </div>
                 </div>
               )}

@@ -27,6 +27,9 @@ The journal app uses a CSS custom property (CSS variable) based theme system. Sw
 | `kuromi` | `theme-kuromi` | 🖤 | Kawaii goth — deep purple/black + fuchsia |
 | `cinnamoroll` | `theme-cinnamoroll` | ☁️ | Soft baby blue + lavender |
 | `badtzbadtzmaru` | `theme-badtzbadtzmaru` | 🐧 | Bold black/white + electric yellow |
+| `mymelody` | `theme-mymelody` | 🎀 | Pink and white Sanrio aesthetic |
+| `pompompurin` | `theme-pompompurin` | 🍮 | Warm golden yellow + brown |
+| `noir` | `theme-noir` | 🌑 | OLED black base + `#c8f135` lime accent |
 
 ---
 
@@ -95,10 +98,57 @@ That's it. The `ThemeSwitcher` picks it up automatically — no other files need
 The `MarkdownEditor` component (`@uiw/react-md-editor`) uses a `data-color-mode` attribute. Themes with dark backgrounds are listed in a set inside [MarkdownEditor.tsx](frontend/src/components/MarkdownEditor.tsx):
 
 ```ts
-const DARK_THEME_IDS = new Set(["dark", "kuromi", "badtzbadtzmaru"])
+const DARK_THEME_IDS = new Set(["dark", "kuromi", "badtzbadtzmaru", "noir"])
 ```
 
 If you add a dark theme, add its `id` to this set so the editor renders with the dark palette.
+
+---
+
+## Custom Theme Builder
+
+The app includes a built-in theme builder that lets users create and save a fully custom theme without editing any code.
+
+### How it works
+
+1. Open **Settings → Custom Theme** (or the theme builder panel in the sidebar)
+2. Use the color pickers to set each `--j-*` token value — a live preview updates immediately
+3. Click **Save Theme** to apply and persist the custom theme to `localStorage`
+4. Click **Export JSON** to download the theme as a `.json` file — useful for backups or sharing
+5. Click **Import JSON** and select a previously exported file to restore a custom theme
+
+### JSON format
+
+Exported theme files follow this structure:
+
+```json
+{
+  "id": "custom",
+  "label": "My Custom Theme",
+  "tokens": {
+    "--j-bg-base": "#1a1a2e",
+    "--j-bg-surface": "#16213e",
+    "--j-bg-elevated": "#0f3460",
+    "--j-sidebar-bg": "#16213e",
+    "--j-sidebar-border": "#0f3460",
+    "--j-text-primary": "#e0e0e0",
+    "--j-text-secondary": "#a0a0b0",
+    "--j-text-muted": "#606070",
+    "--j-border": "#0f3460",
+    "--j-accent": "#e94560",
+    "--j-accent-hover": "#c73550",
+    "--j-accent-text": "#ffffff",
+    "--j-ring": "#e94560"
+  }
+}
+```
+
+### Notes
+
+- The custom theme is stored under `localStorage` key `journal-custom-theme`
+- Only one custom theme slot exists; importing a new JSON overwrites the previous one
+- Built-in themes (Light, Dark, etc.) cannot be overwritten — the custom slot is separate
+- Dark themes (where `--j-bg-base` is very dark) should also update `DARK_THEME_IDS` in `MarkdownEditor.tsx` if the editor color mode matters
 
 ---
 

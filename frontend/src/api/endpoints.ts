@@ -26,7 +26,7 @@ export const authApi = {
   register: (data: { email: string; username: string; password: string; password_confirm: string }) =>
     apiClient.post<{ user: User } & AuthTokens>("/auth/register/", data),
 
-  login: (data: { email: string; password: string }) =>
+  login: (data: { username: string; password: string }) =>
     apiClient.post<AuthTokens>("/auth/login/", data),
 
   refresh: (refresh: string) =>
@@ -37,6 +37,9 @@ export const authApi = {
 
   me: () =>
     apiClient.get<User>("/auth/me/"),
+
+  googleLogin: (credential: string) =>
+    apiClient.post<{ user: User } & AuthTokens>("/auth/google/", { credential }),
 };
 
 // Entries

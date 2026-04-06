@@ -1,5 +1,7 @@
 # Features & Version Log
 
+**Current Version: v1.0.0**
+
 Tracks every implemented feature, its status, and a backlog of planned work.
 
 ---
@@ -14,9 +16,11 @@ Tracks every implemented feature, its status, and a backlog of planned work.
 | Routing | React Router DOM 6 |
 | HTTP | Axios 1.7 |
 | Markdown | @uiw/react-md-editor 4 |
+| Charts | recharts 2 |
+| OAuth | @react-oauth/google |
 | Backend | Django 5.1 + Django REST Framework 3.15 |
-| Auth | JWT via djangorestframework-simplejwt |
-| Database | PostgreSQL (psycopg3) |
+| Auth | JWT via djangorestframework-simplejwt + Google OAuth (google-auth) |
+| Database | PostgreSQL 16 (psycopg3) |
 | Filtering | django-filter |
 | Container | Docker + docker-compose |
 
@@ -35,6 +39,108 @@ Tracks every implemented feature, its status, and a backlog of planned work.
 ---
 
 ## Changelog
+
+### v1.0.0 — Production Release
+
+**Google OAuth**
+- [x] Google OAuth sign-in on Login and Register pages via `@react-oauth/google`
+- [x] `POST /api/v1/auth/google/` — backend endpoint verifies Google ID token, issues JWT pair
+- [x] `google-auth` library for server-side token verification
+- [x] Seamless account creation on first OAuth sign-in
+
+**UI / Performance**
+- [x] Sticky sidebar — always visible while scrolling long entry lists
+- [x] Heatmap live update — refreshes immediately after saving a new entry
+- [x] Lazy loading for route-level components to reduce initial bundle size
+- [x] Changelog page at `/changelog` listing all version history
+
+**Deployment**
+- [x] `docker-compose.prod.yml` — production multi-service compose file
+- [x] `frontend/nginx.conf` — Nginx config for SPA routing + API proxy
+- [x] `backend/.dockerignore` + `frontend/.dockerignore`
+- [x] `DEPLOYMENT.md` — step-by-step VPS + Render deployment guide
+
+---
+
+### v0.12.0 — Account Management & Admin Rework
+
+**Account settings**
+- [x] Change password endpoint + UI form
+- [x] Update display name and avatar
+- [x] Account deletion with confirmation
+- [x] Export all entries as `.zip` (individual markdown files)
+
+**Security**
+- [x] Rate limiting on auth endpoints via `AUTH_THROTTLE_RATE`
+- [x] Inactivity auto-lock — re-prompts for password after configurable idle timeout
+
+**Admin panel rework**
+- [x] Full-width admin layout
+- [x] `ThemeSwitcher` available in admin panel
+- [x] Shared Links management page in admin
+- [x] Settings page in admin
+
+---
+
+### v0.11.0 — Entry Versioning, Shared Links & Streak Cards
+
+**Entry versioning**
+- [x] `EntryVersion` model — snapshot saved on every edit
+- [x] Edit history UI — view and restore previous versions from the entry detail page
+
+**Shared read-only links**
+- [x] `SharedLink` model with UUID token
+- [x] `GET /api/v1/entries/{id}/share/` — generates a shareable link
+- [x] Public read-only view accessible without authentication
+
+**Insights**
+- [x] Streak cards on Insights page — current streak + longest streak display
+
+---
+
+### v0.10.0 — More Themes & Custom Theme Builder
+
+**New themes**
+- [x] My Melody (`theme-mymelody`) — pink and white Sanrio aesthetic
+- [x] Pompompurin (`theme-pompompurin`) — warm golden yellow + brown
+
+**Custom theme builder**
+- [x] In-app UI to pick accent and background colors with live preview
+- [x] Export custom theme as JSON file
+- [x] Import JSON theme file to restore or share custom themes
+
+---
+
+### v0.9.0 — Image Attachments, Templates & Sidebar Enhancements
+
+**Image attachments**
+- [x] `Attachment` model — `image` FileField per entry, stored in `media/`
+- [x] Upload image from entry form; displayed in entry detail view
+- [x] `GET /api/v1/entries/{id}/attachments/` endpoint
+
+**Entry templates**
+- [x] Pre-defined templates selectable when creating a new entry
+- [x] Templates populate title and body starters (e.g., Gratitude, Daily Reflection)
+
+**Sidebar**
+- [x] Collapsible sidebar sections (stats, heatmap, nav)
+- [x] Drag-to-reorder sidebar sections
+
+---
+
+### v0.8.0 — Search Highlighting, Date Range Filter & Tag Management
+
+**Search**
+- [x] Search result highlighting — matched terms wrapped in `<mark>` in entry list cards
+- [x] Date range filter — "From" and "To" date pickers in the filter panel
+- [x] Combined mood + tag + date filter (all filters compose server-side)
+
+**Tag management**
+- [x] Rename and delete tags from the admin tag management page
+- [x] Tag usage count displayed in tag list
+- [x] Tag color picker UI in the tag form
+
+---
 
 ### v0.7.0 — Stickers, Handwriting Canvas & Sidebar Overhaul
 
@@ -125,7 +231,7 @@ Tracks every implemented feature, its status, and a backlog of planned work.
 - [x] `EntryTrashSerializer` — includes `deleted_at` field
 - [x] `TrashPage` — shows deleted entries with Restore and Delete forever actions, infinite scroll, skeleton loading, toasts
 - [x] `useTrashEntries`, `useRestoreEntry`, `useHardDeleteEntry` hooks
-- [x] `SidebarNav` component — navigation links (Journal 📓, Trash 🗑️) with active state, rendered in sidebar on both Dashboard and Trash pages
+- [x] `SidebarNav` component — navigation links (Journal, Trash) with active state, rendered in sidebar on both Dashboard and Trash pages
 - [x] `/trash` route registered in `App.tsx`
 
 **Infinite scroll**
@@ -191,11 +297,11 @@ Tracks every implemented feature, its status, and a backlog of planned work.
 - [x] Tailwind config extended with `j-*` color utilities mapped to CSS vars
 
 **Themes included**
-- [x] Light (`theme-light`) — default ☀️
-- [x] Dark (`theme-dark`) — default dark 🌙
-- [x] Kuromi (`theme-kuromi`) — kawaii goth, deep purple/black + fuchsia 🖤
-- [x] Cinnamoroll (`theme-cinnamoroll`) — soft baby blue + lavender ☁️
-- [x] Bad Badtz-Maru (`theme-badtzbadtzmaru`) — bold black/white + electric yellow 🐧
+- [x] Light (`theme-light`) — default
+- [x] Dark (`theme-dark`) — default dark
+- [x] Kuromi (`theme-kuromi`) — kawaii goth, deep purple/black + fuchsia
+- [x] Cinnamoroll (`theme-cinnamoroll`) — soft baby blue + lavender
+- [x] Bad Badtz-Maru (`theme-badtzbadtzmaru`) — bold black/white + electric yellow
 
 **Component updates**
 - [x] All `dark:` Tailwind prefixes removed from every component and page
@@ -279,10 +385,10 @@ Tracks every implemented feature, its status, and a backlog of planned work.
 
 ## Backlog
 
-Planned features, not yet implemented. Reorder freely.
+All previously planned features have been implemented as of v1.0.0.
 
 ### UI / UX
-- [ ] Collapsible sidebar toggle on desktop
+- [x] Collapsible sidebar toggle on desktop — done in v0.9.0
 - [x] Entry sort order — newest / oldest / last updated — done in v0.5.0
 - [x] Pagination or infinite scroll on dashboard — done in v0.5.0 (infinite scroll)
 - [x] Skeleton loading cards instead of spinner — done in v0.4.0
@@ -294,46 +400,47 @@ Planned features, not yet implemented. Reorder freely.
 - [x] Soft delete / trash with restore — done in v0.5.0
 - [x] Entry word count display — done in v0.4.0
 - [x] Reading time estimate — done in v0.4.0
-- [ ] Attachments / image upload
-- [ ] Entry templates
+- [x] Attachments / image upload — done in v0.9.0
+- [x] Entry templates — done in v0.9.0
 
 ### Tagging
-- [ ] Rename and delete tags
-- [ ] Tag color picker UI in form
-- [ ] Tag usage count display
+- [x] Rename and delete tags — done in v0.8.0
+- [x] Tag color picker UI in form — done in v0.8.0
+- [x] Tag usage count display — done in v0.8.0
 
 ### Themes
-- [ ] My Melody theme
-- [ ] Pompompurin theme
-- [ ] Custom theme builder — let user pick accent + background colors
-- [ ] Export / import custom theme as JSON
+- [x] My Melody theme — done in v0.10.0
+- [x] Pompompurin theme — done in v0.10.0
+- [x] Custom theme builder — done in v0.10.0
+- [x] Export / import custom theme as JSON — done in v0.10.0
 
 ### Search
-- [ ] Full-text search highlight in results
-- [ ] Search by date range
-- [ ] Combined mood + tag + date filter
+- [x] Full-text search highlight in results — done in v0.8.0
+- [x] Search by date range — done in v0.8.0
+- [x] Combined mood + tag + date filter — done in v0.8.0
 
 ### Account
-- [ ] Change password
-- [ ] Update display name
-- [ ] Account deletion
-- [ ] Export all entries as `.zip` (markdown files)
+- [x] Change password — done in v0.12.0
+- [x] Update display name — done in v0.12.0
+- [x] Account deletion — done in v0.12.0
+- [x] Export all entries as `.zip` (markdown files) — done in v0.12.0
 
 ### Insights
 - [x] Mood trend chart over time — done in v0.6.0
 - [x] Monthly recap (entry count, mood distribution, top tags) — done in v0.6.0
 - [x] "On this day" memories on dashboard — done in v0.6.0
-- [ ] Streaks — longest journaling streak, current streak
+- [x] Streaks — longest journaling streak, current streak — done in v0.11.0
 - [x] Heatmap calendar view of writing activity — done in v0.7.0
 
 ### Backend / API
-- [ ] Rate limiting on auth endpoints
-- [ ] Entry versioning / edit history
-- [ ] Shared read-only entry links
+- [x] Rate limiting on auth endpoints — done in v0.12.0
+- [x] Entry versioning / edit history — done in v0.11.0
+- [x] Shared read-only entry links — done in v0.11.0
 
 ---
 
 ## Notes
 
 - See [THEMING.md](THEMING.md) for the full guide on adding themes and using CSS tokens.
+- See [DEPLOYMENT.md](DEPLOYMENT.md) for production deployment instructions.
 - Default theme on fresh installs is `dark` (set in `themes.ts` → `DEFAULT_THEME_ID`).
