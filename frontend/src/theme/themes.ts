@@ -155,7 +155,7 @@ export const THEMES: Theme[] = [
   },
   {
     id: "mymelody",
-    label: "My Melody",
+    label: "Leyley",
     htmlClass: "theme-mymelody",
     swatches: ["#fff0f5", "#f43f8e", "#4a0020"],
     icon: "🎀",

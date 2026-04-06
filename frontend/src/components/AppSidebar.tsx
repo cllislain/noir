@@ -17,7 +17,6 @@ const NAV_ITEMS: NavItem[] = [
   { to: "/",         label: "Home",     icon: "📓" },
   { to: "/insights", label: "Insights", icon: "📊" },
   { to: "/trash",    label: "Trash",    icon: "🗑️" },
-  { to: "/admin",    label: "Admin",    icon: "⚙️", adminOnly: true },
 ]
 
 const SECTION_LABELS: Record<SectionId, string> = {

@@ -14,10 +14,10 @@ function mediaPath(url: string | null): string | null {
 
 const LOCK_OPTIONS = [
   { label: "Never", value: 0 },
-  { label: "5 minutes", value: 5 },
-  { label: "15 minutes", value: 15 },
-  { label: "30 minutes", value: 30 },
-  { label: "60 minutes", value: 60 },
+  { label: "5 min", value: 5 },
+  { label: "15 min", value: 15 },
+  { label: "30 min", value: 30 },
+  { label: "60 min", value: 60 },
 ]
 
 export function AccountPage() {
@@ -127,138 +127,162 @@ export function AccountPage() {
     }
   }
 
-  const sectionClass = "card p-5 space-y-4"
-  const headingClass = "text-base font-semibold"
-
   return (
     <Layout sidebar={<AppSidebar />}>
-      <div className="max-w-xl space-y-6">
-        <div>
-          <h1 className="text-xl font-bold" style={{ color: "var(--j-text-primary)" }}>Account</h1>
-          <p className="text-sm mt-0.5" style={{ color: "var(--j-text-muted)" }}>
-            Manage your profile and security settings
-          </p>
-        </div>
+      {/* Page header */}
+      <div className="mb-6">
+        <h1 className="text-xl font-bold" style={{ color: "var(--j-text-primary)" }}>Account</h1>
+        <p className="text-sm mt-0.5" style={{ color: "var(--j-text-muted)" }}>
+          Manage your profile and security settings
+        </p>
+      </div>
 
-        {/* ── Profile ── */}
-        <div className={sectionClass} style={{ backgroundColor: "var(--j-bg-surface)" }}>
-          <h2 className={headingClass} style={{ color: "var(--j-text-primary)" }}>Profile</h2>
-          <form onSubmit={handleSaveProfile} className="space-y-4">
-            {/* Avatar */}
-            <div className="flex items-center gap-4">
-              <button
-                type="button"
-                onClick={() => avatarInputRef.current?.click()}
-                className="relative w-16 h-16 rounded-full overflow-hidden border-2 flex-shrink-0 transition-opacity hover:opacity-80"
-                style={{ borderColor: "var(--j-accent)" }}
-                title="Click to change avatar"
-              >
-                {avatarPreview ? (
-                  <img src={avatarPreview} alt="Avatar" className="w-full h-full object-cover" />
-                ) : (
-                  <div
-                    className="w-full h-full flex items-center justify-center text-2xl font-bold"
-                    style={{ backgroundColor: "var(--j-bg-elevated)", color: "var(--j-accent)" }}
-                  >
-                    {(user?.display_name || user?.username || "?")[0].toUpperCase()}
+      {/* Two-column grid on md+, single column on mobile */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-start">
+
+        {/* ── Left column ── */}
+        <div className="space-y-5">
+
+          {/* Profile */}
+          <section
+            className="card p-5 space-y-4"
+            style={{ backgroundColor: "var(--j-bg-surface)" }}
+          >
+            <h2 className="text-base font-semibold" style={{ color: "var(--j-text-primary)" }}>Profile</h2>
+            <form onSubmit={handleSaveProfile} className="space-y-4">
+              {/* Avatar + display name */}
+              <div className="flex items-center gap-4">
+                <button
+                  type="button"
+                  onClick={() => avatarInputRef.current?.click()}
+                  className="relative w-16 h-16 rounded-full overflow-hidden border-2 flex-shrink-0 transition-opacity hover:opacity-80"
+                  style={{ borderColor: "var(--j-accent)" }}
+                  title="Click to change avatar"
+                >
+                  {avatarPreview ? (
+                    <img src={avatarPreview} alt="Avatar" className="w-full h-full object-cover" />
+                  ) : (
+                    <div
+                      className="w-full h-full flex items-center justify-center text-2xl font-bold"
+                      style={{ backgroundColor: "var(--j-bg-elevated)", color: "var(--j-accent)" }}
+                    >
+                      {(user?.display_name || user?.username || "?")[0].toUpperCase()}
+                    </div>
+                  )}
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 hover:opacity-100 transition-opacity">
+                    <span className="text-white text-xs">✏️</span>
                   </div>
-                )}
-                <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 hover:opacity-100 transition-opacity">
-                  <span className="text-white text-xs">✏️</span>
+                </button>
+                <input ref={avatarInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
+                <div className="flex-1">
+                  <label className="label">Display name</label>
+                  <input
+                    type="text"
+                    className="input"
+                    value={displayName}
+                    onChange={(e) => setDisplayName(e.target.value)}
+                    maxLength={100}
+                    placeholder={user?.username ?? ""}
+                  />
+                  <p className="text-xs mt-1" style={{ color: "var(--j-text-muted)" }}>
+                    Shown instead of your username
+                  </p>
                 </div>
-              </button>
-              <input ref={avatarInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
-              <div className="flex-1">
-                <label className="label">Display name</label>
-                <input
-                  type="text"
-                  className="input"
-                  value={displayName}
-                  onChange={(e) => setDisplayName(e.target.value)}
-                  maxLength={100}
-                  placeholder={user?.username ?? ""}
-                />
-                <p className="text-xs mt-1" style={{ color: "var(--j-text-muted)" }}>
-                  Shown instead of your username where available
-                </p>
               </div>
-            </div>
-            <button type="submit" className="btn-primary" disabled={savingProfile}>
-              {savingProfile ? "Saving…" : "Save profile"}
-            </button>
-          </form>
-        </div>
-
-        {/* ── Change Password ── */}
-        <div className={sectionClass} style={{ backgroundColor: "var(--j-bg-surface)" }}>
-          <h2 className={headingClass} style={{ color: "var(--j-text-primary)" }}>Change password</h2>
-          <form onSubmit={handleChangePassword} className="space-y-3">
-            <div>
-              <label className="label">Current password</label>
-              <input type="password" className="input" value={currentPw} onChange={(e) => setCurrentPw(e.target.value)} required />
-            </div>
-            <div>
-              <label className="label">New password</label>
-              <input type="password" className="input" value={newPw} onChange={(e) => setNewPw(e.target.value)} required minLength={8} />
-            </div>
-            <div>
-              <label className="label">Confirm new password</label>
-              <input type="password" className="input" value={confirmPw} onChange={(e) => setConfirmPw(e.target.value)} required />
-            </div>
-            <button type="submit" className="btn-primary" disabled={savingPw}>
-              {savingPw ? "Changing…" : "Change password"}
-            </button>
-          </form>
-        </div>
-
-        {/* ── Auto-lock ── */}
-        <div className={sectionClass} style={{ backgroundColor: "var(--j-bg-surface)" }}>
-          <h2 className={headingClass} style={{ color: "var(--j-text-primary)" }}>Auto-lock</h2>
-          <p className="text-sm" style={{ color: "var(--j-text-muted)" }}>
-            Lock your session after a period of inactivity.
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {LOCK_OPTIONS.map((opt) => (
-              <button
-                key={opt.value}
-                type="button"
-                onClick={() => handleLockChange(opt.value)}
-                className="px-3 py-1.5 rounded-lg text-sm border transition-colors"
-                style={
-                  lockTimeout === opt.value
-                    ? { backgroundColor: "var(--j-accent)", color: "var(--j-accent-text)", borderColor: "var(--j-accent)" }
-                    : { backgroundColor: "var(--j-bg-surface)", color: "var(--j-text-secondary)", borderColor: "var(--j-border)" }
-                }
-              >
-                {opt.label}
+              <button type="submit" className="btn-primary" disabled={savingProfile}>
+                {savingProfile ? "Saving…" : "Save profile"}
               </button>
-            ))}
-          </div>
+            </form>
+          </section>
+
+          {/* Change Password */}
+          <section
+            className="card p-5 space-y-4"
+            style={{ backgroundColor: "var(--j-bg-surface)" }}
+          >
+            <h2 className="text-base font-semibold" style={{ color: "var(--j-text-primary)" }}>Change password</h2>
+            <form onSubmit={handleChangePassword} className="space-y-3">
+              <div>
+                <label className="label">Current password</label>
+                <input type="password" className="input" value={currentPw} onChange={(e) => setCurrentPw(e.target.value)} required />
+              </div>
+              <div>
+                <label className="label">New password</label>
+                <input type="password" className="input" value={newPw} onChange={(e) => setNewPw(e.target.value)} required minLength={8} />
+              </div>
+              <div>
+                <label className="label">Confirm new password</label>
+                <input type="password" className="input" value={confirmPw} onChange={(e) => setConfirmPw(e.target.value)} required />
+              </div>
+              <button type="submit" className="btn-primary" disabled={savingPw}>
+                {savingPw ? "Changing…" : "Change password"}
+              </button>
+            </form>
+          </section>
         </div>
 
-        {/* ── Export ── */}
-        <div className={sectionClass} style={{ backgroundColor: "var(--j-bg-surface)" }}>
-          <h2 className={headingClass} style={{ color: "var(--j-text-primary)" }}>Export data</h2>
-          <p className="text-sm" style={{ color: "var(--j-text-muted)" }}>
-            Download all your entries as a ZIP of Markdown files with YAML front matter.
-          </p>
-          <button type="button" className="btn-secondary" onClick={handleExport} disabled={exporting}>
-            {exporting ? "Preparing…" : "⬇ Download entries as ZIP"}
-          </button>
-        </div>
+        {/* ── Right column ── */}
+        <div className="space-y-5">
 
-        {/* ── Danger Zone ── */}
-        <div
-          className="card p-5 space-y-3 border-2"
-          style={{ backgroundColor: "var(--j-bg-surface)", borderColor: "rgba(239,68,68,0.4)" }}
-        >
-          <h2 className="text-base font-semibold text-red-500">Danger zone</h2>
-          <p className="text-sm" style={{ color: "var(--j-text-muted)" }}>
-            Permanently delete your account and all your entries. This cannot be undone.
-          </p>
-          <button type="button" className="btn-danger" onClick={() => setShowDeleteModal(true)}>
-            Delete my account
-          </button>
+          {/* Auto-lock */}
+          <section
+            className="card p-5 space-y-4"
+            style={{ backgroundColor: "var(--j-bg-surface)" }}
+          >
+            <div>
+              <h2 className="text-base font-semibold" style={{ color: "var(--j-text-primary)" }}>Auto-lock</h2>
+              <p className="text-sm mt-0.5" style={{ color: "var(--j-text-muted)" }}>
+                Lock your session after a period of inactivity.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {LOCK_OPTIONS.map((opt) => (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => handleLockChange(opt.value)}
+                  className="px-4 py-1.5 rounded-full text-sm border transition-colors"
+                  style={
+                    lockTimeout === opt.value
+                      ? { backgroundColor: "var(--j-accent)", color: "var(--j-accent-text)", borderColor: "var(--j-accent)" }
+                      : { backgroundColor: "var(--j-bg-elevated)", color: "var(--j-text-secondary)", borderColor: "var(--j-border)" }
+                  }
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </section>
+
+          {/* Export */}
+          <section
+            className="card p-5 space-y-3"
+            style={{ backgroundColor: "var(--j-bg-surface)" }}
+          >
+            <div>
+              <h2 className="text-base font-semibold" style={{ color: "var(--j-text-primary)" }}>Export data</h2>
+              <p className="text-sm mt-0.5" style={{ color: "var(--j-text-muted)" }}>
+                Download all your entries as a ZIP of Markdown files.
+              </p>
+            </div>
+            <button type="button" className="btn-secondary" onClick={handleExport} disabled={exporting}>
+              {exporting ? "Preparing…" : "⬇ Download entries as ZIP"}
+            </button>
+          </section>
+
+          {/* Danger zone */}
+          <section
+            className="card p-5 space-y-3 border-2"
+            style={{ backgroundColor: "var(--j-bg-surface)", borderColor: "rgba(239,68,68,0.4)" }}
+          >
+            <h2 className="text-base font-semibold text-red-500">Danger zone</h2>
+            <p className="text-sm" style={{ color: "var(--j-text-muted)" }}>
+              Permanently delete your account and all your entries. This cannot be undone.
+            </p>
+            <button type="button" className="btn-danger" onClick={() => setShowDeleteModal(true)}>
+              Delete my account
+            </button>
+          </section>
         </div>
       </div>
 

@@ -24,12 +24,11 @@ export function ThemeSwitcher() {
       <div ref={containerRef} className="relative">
         <button
           onClick={() => setOpen((v) => !v)}
-          className="btn-secondary text-sm py-1.5 px-3 flex items-center gap-1.5"
+          className="btn-secondary text-sm py-1.5 px-2.5 flex items-center gap-1"
           aria-label="Switch theme"
           title={`Theme: ${theme.label}`}
         >
-          <span>{theme.icon}</span>
-          <span className="hidden sm:inline">{theme.label}</span>
+          <span className="text-base">{theme.icon}</span>
           <span className="text-xs opacity-60">{open ? "▲" : "▼"}</span>
         </button>
 

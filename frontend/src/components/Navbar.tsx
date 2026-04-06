@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react"
+import { useState, useRef, useEffect, type ReactNode } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { useAuth } from "@/auth/useAuth"
 import { ThemeSwitcher } from "./ThemeSwitcher"
@@ -18,21 +18,34 @@ interface NavbarProps {
 export function Navbar({ onMenuClick, sidebarOpen, navSlot }: NavbarProps) {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
+  const [accountOpen, setAccountOpen] = useState(false)
   const [signingOut, setSigningOut] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setAccountOpen(false)
+      }
+    }
+    if (accountOpen) document.addEventListener("mousedown", handleClick)
+    return () => document.removeEventListener("mousedown", handleClick)
+  }, [accountOpen])
 
   const handleLogout = async () => {
+    setAccountOpen(false)
     setSigningOut(true)
     await logout()
     navigate("/login", { replace: true })
   }
 
+  const avatar = mediaPath(user?.avatar)
+  const initials = (user?.display_name || user?.username || "?")[0].toUpperCase()
+
   return (
     <nav
       className="sticky top-0 z-40 border-b"
-      style={{
-        backgroundColor: "var(--j-bg-surface)",
-        borderColor: "var(--j-border)",
-      }}
+      style={{ backgroundColor: "var(--j-bg-surface)", borderColor: "var(--j-border)" }}
     >
       <div className="w-full px-4 h-14 flex items-center gap-3">
         {/* Hamburger — mobile only */}
@@ -64,14 +77,12 @@ export function Navbar({ onMenuClick, sidebarOpen, navSlot }: NavbarProps) {
           Noir
         </Link>
 
-        {/* Center slot (search + extras injected by page) */}
+        {/* Center slot */}
         {navSlot && (
           <div className="flex-1 flex items-center gap-2 mx-2">
             {navSlot}
           </div>
         )}
-
-        {/* Right side spacer when no navSlot */}
         {!navSlot && <div className="flex-1" />}
 
         {user && (
@@ -87,52 +98,110 @@ export function Navbar({ onMenuClick, sidebarOpen, navSlot }: NavbarProps) {
               ✏️ <span className="hidden sm:inline">New Entry</span>
             </Link>
 
-            {/* Theme switcher */}
+            {/* Theme switcher — icon only */}
             <ThemeSwitcher />
 
-            {/* Avatar / account chip */}
-            <Link
-              to="/account"
-              className="flex items-center gap-2 px-2 py-1 rounded-lg transition-colors flex-shrink-0"
-              style={{ color: "var(--j-text-secondary)" }}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = "var(--j-bg-elevated)" }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = "transparent" }}
-              title="Account settings"
-            >
-              {mediaPath(user.avatar) ? (
-                <img
-                  src={mediaPath(user.avatar)!}
-                  alt="avatar"
-                  className="w-7 h-7 rounded-full object-cover flex-shrink-0"
-                />
-              ) : (
+            {/* Account dropdown */}
+            <div ref={dropdownRef} className="relative">
+              <button
+                onClick={() => setAccountOpen((v) => !v)}
+                className="flex items-center gap-2 px-1.5 py-1 rounded-lg transition-colors"
+                style={{ color: "var(--j-text-secondary)" }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = "var(--j-bg-elevated)" }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = "transparent" }}
+              >
+                {avatar ? (
+                  <img src={avatar} alt="avatar" className="w-7 h-7 rounded-full object-cover flex-shrink-0" />
+                ) : (
+                  <div
+                    className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
+                    style={{ backgroundColor: "var(--j-accent)", color: "var(--j-accent-text)" }}
+                  >
+                    {initials}
+                  </div>
+                )}
+                <span className="hidden sm:inline text-sm max-w-[100px] truncate">
+                  {user.display_name || user.username}
+                </span>
+                <span className="text-xs opacity-50">{accountOpen ? "▲" : "▼"}</span>
+              </button>
+
+              {accountOpen && (
                 <div
-                  className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
-                  style={{ backgroundColor: "var(--j-accent)", color: "var(--j-accent-text)" }}
+                  className="absolute right-0 mt-2 w-64 rounded-xl border shadow-lg z-50 overflow-hidden"
+                  style={{ backgroundColor: "var(--j-bg-surface)", borderColor: "var(--j-border)" }}
                 >
-                  {(user.display_name || user.username || "?")[0].toUpperCase()}
+                  {/* Profile header */}
+                  <div
+                    className="px-4 py-3 flex items-center gap-3 border-b"
+                    style={{ borderColor: "var(--j-border)" }}
+                  >
+                    {avatar ? (
+                      <img src={avatar} alt="avatar" className="w-10 h-10 rounded-full object-cover flex-shrink-0" />
+                    ) : (
+                      <div
+                        className="w-10 h-10 rounded-full flex items-center justify-center text-base font-bold flex-shrink-0"
+                        style={{ backgroundColor: "var(--j-accent)", color: "var(--j-accent-text)" }}
+                      >
+                        {initials}
+                      </div>
+                    )}
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold truncate" style={{ color: "var(--j-text-primary)" }}>
+                        {user.display_name || user.username}
+                      </p>
+                      <p className="text-xs truncate" style={{ color: "var(--j-text-muted)" }}>
+                        @{user.username}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Menu items */}
+                  <div className="py-1">
+                    <Link
+                      to="/account"
+                      onClick={() => setAccountOpen(false)}
+                      className="flex items-center gap-3 px-4 py-2.5 text-sm transition-colors w-full"
+                      style={{ color: "var(--j-text-secondary)" }}
+                      onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = "var(--j-bg-elevated)" }}
+                      onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = "transparent" }}
+                    >
+                      <span>⚙️</span>
+                      <span>Account settings</span>
+                    </Link>
+
+                    {user.is_staff && (
+                      <Link
+                        to="/admin"
+                        onClick={() => setAccountOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm transition-colors w-full"
+                        style={{ color: "var(--j-text-secondary)" }}
+                        onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = "var(--j-bg-elevated)" }}
+                        onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = "transparent" }}
+                      >
+                        <span>🛡️</span>
+                        <span>Admin panel</span>
+                      </Link>
+                    )}
+                  </div>
+
+                  {/* Sign out */}
+                  <div className="border-t py-1" style={{ borderColor: "var(--j-border)" }}>
+                    <button
+                      onClick={handleLogout}
+                      disabled={signingOut}
+                      className="flex items-center gap-3 px-4 py-2.5 text-sm w-full transition-colors text-left disabled:opacity-50"
+                      style={{ color: "var(--j-text-muted)" }}
+                      onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = "var(--j-bg-elevated)" }}
+                      onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = "transparent" }}
+                    >
+                      <span>↩</span>
+                      <span>{signingOut ? "Signing out…" : "Sign out"}</span>
+                    </button>
+                  </div>
                 </div>
               )}
-              <span className="hidden sm:inline text-sm max-w-[120px] truncate">
-                {user.display_name || user.username}
-              </span>
-            </Link>
-
-            {/* Sign out */}
-            <button
-              onClick={handleLogout}
-              disabled={signingOut}
-              className="text-xs px-2.5 py-1.5 rounded-lg border transition-colors"
-              style={{
-                color: "var(--j-text-muted)",
-                borderColor: "var(--j-border)",
-                backgroundColor: "var(--j-bg-elevated)",
-              }}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "var(--j-text-primary)" }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "var(--j-text-muted)" }}
-            >
-              Sign out
-            </button>
+            </div>
           </div>
         )}
       </div>
