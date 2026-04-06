@@ -48,12 +48,15 @@ services:
     healthCheckPath: /api/v1/
 
   # ── Frontend — React/Vite Static Site ─────────────────────────────────────
-  - type: web
+  - type: static
     name: noir-frontend
-    runtime: node
     rootDir: frontend
     buildCommand: npm install --legacy-peer-deps && npm run build
-    startCommand: npx serve dist -s -l $PORT
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
     envVars:
       - key: VITE_API_URL
         sync: false  # set to https://noir-backend.onrender.com
