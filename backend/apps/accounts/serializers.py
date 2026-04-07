@@ -62,10 +62,15 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    avatar = serializers.SerializerMethodField()
+
     class Meta:
         model = User
         fields = ("id", "email", "username", "display_name", "avatar", "is_staff", "date_joined")
-        read_only_fields = fields
+        read_only_fields = ("id", "email", "username", "display_name", "is_staff", "date_joined")
+
+    def get_avatar(self, obj) -> str:
+        return obj.avatar.url if obj.avatar else ""
 
 
 class ProfileUpdateSerializer(serializers.ModelSerializer):

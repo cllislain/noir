@@ -73,14 +73,19 @@ git push origin main
 
 ---
 
-### Step 3 — Run migrations
+### Step 3 — Migrations run automatically
 
-Once the backend is deployed, open the **Shell** tab in your Render service:
+Migrations and superuser creation run automatically via `backend/entrypoint.sh` on every deploy.
 
-```bash
-python manage.py migrate
-python manage.py createsuperuser
-```
+To create a superuser, set these env vars in the backend service **before** deploying:
+
+| Variable | Value |
+|---|---|
+| `DJANGO_SUPERUSER_USERNAME` | your desired admin username |
+| `DJANGO_SUPERUSER_EMAIL` | your admin email |
+| `DJANGO_SUPERUSER_PASSWORD` | your admin password |
+
+> **Note**: The Shell tab is only available on paid Render plans. The entrypoint script approach works on free tier.
 
 ---
 
@@ -239,10 +244,32 @@ In production, files are served from Supabase Storage. Check:
 - `SUPABASE_URL` matches your Supabase project URL exactly
 
 ### Static files not loading (404)
-Run `python manage.py collectstatic --noinput` in the Render shell, then redeploy.
+`collectstatic` runs automatically via `entrypoint.sh`. If missing, check the deploy logs for errors.
 
-### Google OAuth `redirect_uri_mismatch`
-Add your production frontend URL to both **Authorized JavaScript origins** and **Authorized redirect URIs** in Google Cloud Console.
+### Google OAuth `client_id not set correctly`
+Vite bakes env vars at **build time**. If `VITE_GOOGLE_CLIENT_ID` is set in Render but the button still shows the wrong ID:
+1. Ensure the value is committed in `frontend/.env.production` in the repo
+2. Trigger a **Manual Deploy** after adding/changing env vars — static sites don't auto-rebuild on env changes
+
+### Google OAuth `origin not allowed` (403)
+Add your exact frontend URL to **Authorized JavaScript origins** in Google Cloud Console. Changes can take up to a few hours to propagate.
+
+### Database `failed to resolve host 'db'`
+The backend is using development settings. Set `DJANGO_SETTINGS_MODULE=config.settings.production` in Render backend environment.
+
+### Database IPv6 / `Network is unreachable`
+Render free tier only supports IPv4. Use the **Session pooler** connection string from Supabase (not the Direct Connection):
+- Go to Supabase → **Connect** → **Session pooler** → copy URI
+- The hostname will be `aws-X-region.pooler.supabase.com` on port `5432`
+
+### `Tenant or user not found` on pooler connection
+The pooler region in the URL doesn't match your Supabase project region. Use the URI from **Supabase → Connect** directly — don't construct it manually.
+
+### Frontend API calls hitting frontend URL (405 errors)
+`VITE_API_URL` was not set at build time. The app falls back to `/api/v1` which the static site serves as 404/405. Fix: commit `frontend/.env.production` with the correct `VITE_API_URL` and redeploy.
+
+### Frontend deployed as Docker service instead of Static Site
+If Render is running nginx and you see the Docker logs, the service type is wrong. Delete the service and recreate as **Static Site** (not Web Service). The `nginx.conf` in the repo is for local Docker only.
 
 ### Render free tier spin-down
-Free tier Render services spin down after inactivity. The first request after spin-down may take 30+ seconds. Upgrade to a paid plan to avoid this.
+Free tier services spin down after inactivity. The first request after spin-down may take 30+ seconds. Upgrade to a paid plan to avoid this.

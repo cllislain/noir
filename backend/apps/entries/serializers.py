@@ -5,10 +5,15 @@ from .models import Entry, Attachment, EntryVersion
 
 
 class AttachmentSerializer(serializers.ModelSerializer):
+    file = serializers.SerializerMethodField()
+
     class Meta:
         model = Attachment
         fields = ("id", "file", "original_filename", "file_size", "content_type", "created_at")
         read_only_fields = ("id", "original_filename", "file_size", "content_type", "created_at")
+
+    def get_file(self, obj) -> str:
+        return obj.file.url if obj.file else ""
 
 
 class AttachmentUploadSerializer(serializers.Serializer):

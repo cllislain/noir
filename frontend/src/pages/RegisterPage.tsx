@@ -107,6 +107,7 @@ export function RegisterPage() {
           </form>
         </div>
 
+        {/* Google sign-in temporarily disabled — pending OAuth config
         <div className="relative my-4">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t" style={{ borderColor: "var(--j-border)" }} />
@@ -115,13 +116,11 @@ export function RegisterPage() {
             <span className="px-2" style={{ backgroundColor: "var(--j-bg-base)" }}>or</span>
           </div>
         </div>
-
         {googleError && (
           <div className="rounded-lg bg-red-50 border border-red-200 p-3 text-sm text-red-700 text-center">
             {googleError}
           </div>
         )}
-
         <div className="flex justify-center">
           <GoogleLogin
             onSuccess={async (credentialResponse) => {
@@ -142,6 +141,7 @@ export function RegisterPage() {
             width="360"
           />
         </div>
+        */}
 
         <p className="text-center text-sm mt-4" style={{ color: "var(--j-text-muted)" }}>
           Already have an account?{" "}
