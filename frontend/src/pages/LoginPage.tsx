@@ -1,10 +1,9 @@
 import { useState, type FormEvent } from "react"
 import { Link, useNavigate, useLocation, useSearchParams } from "react-router-dom"
-import { GoogleLogin } from "@react-oauth/google"
 import { useAuth } from "@/auth/useAuth"
 
 export function LoginPage() {
-  const { login, googleLogin } = useAuth()
+  const { login } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
   const [searchParams] = useSearchParams()

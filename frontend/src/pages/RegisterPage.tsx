@@ -1,12 +1,10 @@
 import { useState, type FormEvent } from "react"
 import { Link, useNavigate } from "react-router-dom"
-import { GoogleLogin } from "@react-oauth/google"
 import { useAuth } from "@/auth/useAuth"
 
 export function RegisterPage() {
-  const { register, googleLogin } = useAuth()
+  const { register } = useAuth()
   const navigate = useNavigate()
-  const [googleError, setGoogleError] = useState<string | null>(null)
 
   const [form, setForm] = useState({
     email: "", username: "", password: "", passwordConfirm: "",
