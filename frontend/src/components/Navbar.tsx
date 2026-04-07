@@ -5,7 +5,9 @@ import { ThemeSwitcher } from "./ThemeSwitcher"
 
 function mediaPath(url: string | null | undefined): string | null {
   if (!url) return null
-  try { return new URL(url).pathname } catch { return url }
+  // If already an absolute URL (Supabase in production), use as-is
+  if (url.startsWith("http://") || url.startsWith("https://")) return url
+  return url
 }
 
 interface NavbarProps {

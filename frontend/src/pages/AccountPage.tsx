@@ -9,7 +9,8 @@ import { getInactivityTimeout, setInactivityTimeout } from "@/hooks/useInactivit
 
 function mediaPath(url: string | null): string | null {
   if (!url) return null
-  try { return new URL(url).pathname } catch { return url }
+  if (url.startsWith("http://") || url.startsWith("https://")) return url
+  return url
 }
 
 const LOCK_OPTIONS = [

@@ -1,13 +1,9 @@
 import { useState } from "react"
 import type { Attachment } from "@/types"
 
-/** Strip origin so the URL goes through the Vite /media proxy instead of hitting the Docker hostname directly. */
 function mediaPath(url: string): string {
-  try {
-    return new URL(url).pathname
-  } catch {
-    return url
-  }
+  if (url.startsWith("http://") || url.startsWith("https://")) return url
+  return url
 }
 
 interface AttachmentGalleryProps {
